@@ -229,6 +229,7 @@ function draw() {
   if (collision.collided) {
     currentCamBody=bouncyBall//switching camera focus
   }
+  
   background(170);
   renderVertices(ramp1)
   renderVertices(ramp2)
