@@ -1,103 +1,345 @@
 const Engine = Matter.Engine;
+const Render = Matter.Render;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const MouseConstraint = Matter.MouseConstraint;
+const Composites = Matter.Composites;
+const Composite = Matter.Composite;
 const Mouse = Matter.Mouse;
-const Render = Matter.Render;
+const MouseConstraint = Matter.MouseConstraint;
+const Constraint = Matter.Constraint;
+
+const drawBody = Helpers.drawBody;
+const drawBodies = Helpers.drawBodies;
 
 
-var engine;
-var ground;
-var ramps=[];
-var ramp;
-var ball;
-var mouseConstraint;
-var blocksWidth = 10;
-var blocksHeight = 80;
-var blocksSpacing = 80;
-var rest = 1.15
+
+
+const drawMouse = Helpers.drawMouse;
+
+const drawConstraint = Helpers.drawConstraint;
+
+
+
+let engine;
+
+let boxB;
+let ground1, ground2, ground3,ground4;
+let ballA, ballB;
+var car, car2;
+
+var p1;
+
+
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+
+let allObjectsArray = [];
+let dominoesArray = [];
+let numDominoes = 20;
+let ground;
+let forceApplied = false;
+let pend;
+let pendConstraint;
+
+
+
+let constraint1;
+let poly1;
+
+let constraint2;
+let poly2;
+
+// let constraint3;
+// let poly3;
+
+let constraint3;
+let rect3;
+let ball3;
+
+let constraint4;
+let polyA4;
+let polyB4;
+
+var dencityer=1;
+var restitutioner = 1;
+
+
+engine = Engine.create();
+//Render.run(render);
+
 function setup() {
-  //this is where you create canvas
-  canvas = createCanvas(1400, 800);
+  const canvas = createCanvas(1800, 700);
+
+
+
+  for (let index = 0; index < numDominoes; index++) {
+    var rectangle = Bodies.rectangle(500 + index*40, 350, 15, 135, {
+        frictionAir: 0.005,
+        density:.001
+    
+    });
+
+    console.log(index);
+
+    allObjectsArray.push(rectangle);
+    dominoesArray.push(rectangle);
+}
+
+
+ground = Bodies.rectangle(1080, 500, 1200, 10, {
+  isStatic: true, 
+  // angle: Math.PI * 0.06
+});
+
+
+allObjectsArray.push(ground);
+
+
+
+  // setup mouse
+  // let mouse = Mouse.create(canvas.elt);
+  // let mouseParams = {
+  //   mouse: mouse,
+  //   constraint: { stiffness: 0.05, angularStiffness: 0 }
+  // }
+  // mouseConstraint = MouseConstraint.create(engine, mouseParams);
+  // mouseConstraint.mouse.pixelRatio = pixelDensity();
+  // World.add(engine.world, mouseConstraint);
+
+  // add all of the bodies to the world
+  World.add(engine.world, allObjectsArray);
+
+
+
 
   // create an engine
-    engine = Engine.create();
+  // create two boxes and a ground
 
-  //first ramp
-  ramp1 = Bodies.rectangle(200, 100, 300, 30, {
-    isStatic: true,
-    angle: Math.PI * 0.15
-  })
-  World.add(engine.world, ramp1);
+ 
+  // boxB = Bodies.rectangle(100, 0, 80, 80);
 
-  //second ramp 
-  ramp2 = Bodies.rectangle(375, 300, 300, 30, {
-    isStatic: true,
-    angle: Math.PI * 0.85
-  })
-  World.add(engine.world, ramp2);
-
-  //third ramp
-  ramp3 = Bodies.rectangle(200, 500, 300, 30, {
-    isStatic: true,
-    angle:  Math.PI * 0.15
-  })
-  World.add(engine.world, ramp3);
+  ballA = Bodies.circle(1350, 420, 30,{
+    density:.0003,
+    friction:.1,
+    frictionAir:0
+  });
 
 
-  block1 = Bodies.rectangle(415, 570, 145, 30, {
-    isStatic: true,
-  })
-  World.add(engine.world, block1);
+  // ballB = Bodies.circle(150, 700, 30, {
+  //   frictionStatic: true,
+  //   staticfriction: 0.2
+  // });
+  
+  car = Composites.car(100, 0, 120, 20, 30);
+
+ 
 
 
-  tramp1 = Bodies.rectangle(550, 700, 145, 30, {
-    isStatic: true,
-    angle:  Math.PI * 0.12
-  })
-  World.add(engine.world, tramp1);
+  // ground1 = Bodies.rectangle(800, 100, 1100, 10, {
+  //   isStatic: true, 
+  //   angle: Math.PI * -0.11,
+  //   friction: 0.4
+  // });
 
-  tramp2 = Bodies.rectangle(800, 750, 145, 30, {
-    isStatic: true,
-  })
-  World.add(engine.world, tramp2);
+  ground2 = Bodies.rectangle(170, 320, 480, 10, {
+    isStatic: true, 
+    angle: Math.PI * 0.2,
+    staticfriction: 0
+    // friction: .01
+  });
+  // ground3 = Bodies.rectangle(800, 600, 700, 10, {
+  //   isStatic: true, 
+  //   angle: Math.PI * 0.8,
+  //   friction: 0.1
+  // });
+  // ground4 = Bodies.rectangle(440, 470, 200, 10, {
+  //   isStatic: true,
+  //   friction: 1
+  // });
 
-  //create ball
-  ball = Bodies.circle(150, 20, 55);
-  World.add(engine.world, ball);
+  
 
-  bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-  World.add(engine.world, bouncyBall);
-  //createBall()
+  
+  // add all of the bodies to the world
+  //World.add(engine.world, []);
+  // World.add(engine.world, [ballA, ballB, boxB, ground1, ground2, ground3, ground4, car2]);
+    World.add(engine.world, [ground2, car, ballA]);
 
+
+
+    poly1 = Bodies.circle(380, 410, 30,{
+      restitution: 0,
+      frictionAir: 0,
+      friction:0,
+      density: .001
+    });
+
+    constraint1 = Constraint.create({
+      pointA: { x: 380, y: 100 },
+      bodyB: poly1,
+      
+    });
+    World.add(engine.world, [poly1, constraint1]);
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // run the engine
   Engine.run(engine);
+}
 
-}
-function createBall(){
-  ball = Bodies.circle(150, 20, 30,{ restitution: rest });
-  World.add(engine.world, ball);
-}
+// function getCar(xx, yy, width, height, wheelSize) {
+//   var Body = Matter.Body,
+//       Bodies = Matter.Bodies,
+//       Composite = Matter.Composite,
+//       Constraint = Matter.Constraint;
+
+//   var group = Body.nextGroup(true),
+//       wheelBase = 20,
+//       wheelAOffset = -width * 0.5 + wheelBase,
+//       wheelBOffset = width * 0.5 - wheelBase,
+//       wheelYOffset = 0;
+
+//   var car = Composite.create({ label: 'Car' }),
+//       body = Bodies.rectangle(xx, yy, width, height, { 
+//           collisionFilter: {
+//               group: group
+//           },
+//           chamfer: {
+//               radius: height * 0.5
+//           },
+//           density: 0.0002
+//       });
+
+//   var wheelA = Bodies.circle(xx + wheelAOffset, yy + wheelYOffset, wheelSize, { 
+//       collisionFilter: {
+//           group: group
+//       },
+//       frictionStatic: .8
+//   });
+
+  
+              
+//   var wheelB = Bodies.circle(xx + wheelBOffset, yy + wheelYOffset, wheelSize, { 
+//       collisionFilter: {
+//           group: group
+//       },
+//       frictionStatic:.8
+//   });
+              
+//   var axelA = Constraint.create({
+//       bodyB: body,
+//       pointB: { x: wheelAOffset, y: wheelYOffset },
+//       bodyA: wheelA,
+//       stiffness: 1,
+//       length: 0
+//   });
+                  
+//   var axelB = Constraint.create({
+//       bodyB: body,
+//       pointB: { x: wheelBOffset, y: wheelYOffset },
+//       bodyA: wheelB,
+//       stiffness: 1,
+//       length: 0
+//   });
+
+
+  
+//   // Composite.addBody(car, body);
+//   // Composite.addBody(car, wheelA);
+//   // Composite.addBody(car, wheelB);
+//   // Composite.addConstraint(car, axelA);
+//   // Composite.addConstraint(car, axelB);
+
+//   return car;
+// };
+
+
+
+
+
+
+
+
 function draw() {
-  background(170);
-  renderVertices(ramp1)
-  renderVertices(ramp2)
-  renderVertices(ramp3)
-  renderVertices(block1)
-  renderVertices(tramp1)
-  renderVertices(tramp2)
-  renderVertices(ball)
-  renderVertices(bouncyBall)
 
+
+
+
+  background(0);
+
+
+
+
+  fill(255);
+  drawBody(ballA);
+  // drawBody(boxB);
+  // drawBody(ballB);
+  // drawBody(ballA);
+  dominoesArray.forEach(element => {
+      drawBody(element);
+  });
+
+
+  fill(128);
+
+
+  // drawBody(ground1);
+  drawBody(ground2);
+  drawBody(ground);
+  // drawBody(ground3);
+
+
+
+  
+  
+  fill(255);
+  drawBodies(car.bodies);
+
+
+  drawBody(poly1);
+  // drawBody(poly2);
+  // drawBody(poly3);
+  // drawBody(rect3);
+  stroke(128);
+  strokeWeight(2);
+  drawConstraint(constraint1);
+  // drawConstraint(constraint2);
+  // drawConstraint(constraint3);
 
 }
 
 
-function renderVertices(body){
-  var verts = body.vertices;
-  beginShape();
-  fill(127);
-  for (var i = 0; i < verts.length; i++) {
-    vertex(verts[i].x, verts[i].y);
-  }
-  endShape();
+
+function force() {
+    if(!forceApplied) {
+        Body.applyForce( dominoesArray[0], {x: dominoesArray[0].position.x, y: dominoesArray[0].position.y + 0}, {x: 0.025 * amountForce, y: 0});
+        forceApplied = true;
+    }
+}
+
+let amountForce = 1;
+document.addEventListener("keydown", addForce);
+
+function addForce() {
+    amountForce ++;
 }
