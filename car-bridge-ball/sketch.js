@@ -10,6 +10,10 @@ const Constraint = Matter.Constraint;
 const Body = Matter.Body;
 const Composites = Matter.Composites;
 const Composite = Matter.Composite;
+const Runner= Matter.Runner;
+const Bounds=Matter.Bounds;
+const Events=Matter.Events;
+
 
 const drawMouse = Helpers.drawMouse;
 const drawBody = Helpers.drawBody;
@@ -23,10 +27,23 @@ let ball;
 
 
 function setup() {
-  const canvas = createCanvas(800, 600);
+  const canvas = createCanvas(0, 0);
 
   // create an engine
   engine = Engine.create();
+
+
+  render = Render.create({
+    element: document.body,
+    engine: engine,
+    options: { 
+                width: 800, 
+                height: 600,
+                wireframes: false,
+            }
+});
+Render.run(render);
+
 
   // add bridge
   const group = Body.nextGroup(true);
@@ -55,19 +72,34 @@ function setup() {
   World.add(engine.world, [ball]);
 
   // ground
-  ground = Bodies.rectangle(400, height, 810, 100, {isStatic: true});
+  ground = Bodies.rectangle(400, 600, 810, 100, {isStatic: true});
   World.add(engine.world, [ground]);
 
   // setup mouse
-  const mouse = Mouse.create(canvas.elt);
-  const mouseParams = {
-    mouse: mouse,
-    constraint: { stiffness: 0.05 }
-  }
-  mouseConstraint = MouseConstraint.create(engine, mouseParams);
-  mouseConstraint.mouse.pixelRatio = pixelDensity();
+  // const mouse = Mouse.create(canvas.elt);
+  // const mouseParams = {
+  //   mouse: mouse,
+  //   constraint: { stiffness: 0.05 }
+  // }
+  // mouseConstraint = MouseConstraint.create(engine, mouseParams);
+  // mouseConstraint.mouse.pixelRatio = pixelDensity();
+  // World.add(engine.world, mouseConstraint);
+
+
+  var mouse = Mouse.create(render.canvas),
+  mouseConstraint = MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+          stiffness: 0.1,
+          render: {
+              visible: false
+          }
+      }
+  });
   World.add(engine.world, mouseConstraint);
 
+
+  render.mouse = mouse;
   // run the engine
   Engine.run(engine);
 }
@@ -77,15 +109,26 @@ function draw() {
 
   stroke(255);
   fill(255);
-  drawBody(ball);
-  drawBodies(bridge.bodies);
+  renderVertices(ball);
+  renderVertices(bridge.bodies);
   stroke(128);
   strokeWeight(2);
   drawConstraints(bridge.constraints);
 
   noStroke();
   fill(128);
-  drawBody(ground);
+  renderVertices(ground);
 
   drawMouse(mouseConstraint);
+}
+
+
+function renderVertices(body){
+  var verts = body.vertices;
+  beginShape();
+  fill(127);
+  for (var i = 0; i < verts.length; i++) {
+    vertex(verts[i].x, verts[i].y);
+  }
+  endShape();
 }
