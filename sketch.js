@@ -1,131 +1,3 @@
-// const Engine = Matter.Engine;
-// const World = Matter.World;
-// const Bodies = Matter.Bodies;
-// const MouseConstraint = Matter.MouseConstraint;
-// const Mouse = Matter.Mouse;
-// const Render = Matter.Render;
-// const Bounds=Matter.Bounds;
-// const Runner= Matter.Runner;
-
-// var engine;
-// var ground;
-// var render;
-// var world;
-// var ramps=[];
-// var ramp;
-// var ball;
-// var mouseConstraint;
-// var blocksWidth = 10;
-// var blocksHeight = 80;
-// var blocksSpacing = 80;
-// var rest = 1.15
-// function setup() {
-//   //this is where you create canvas
-//   canvas = createCanvas(1400, 800);
-
-//   // create an engine
-//     engine = Engine.create();
-//     world = engine.world;
-
-//         // create a renderer
-//         render = Render.create({
-//           element: document.body,
-//           engine: engine,
-//           options: { 
-//                       width: window.innerWidth, 
-//                       height: window.innerHeight,
-//                       wireframes: false,
-//                       showVelocity: true,
-//                       showCollisions: true,
-//                       hasBounds: true
-//                   }
-//       });
-
-//       Render.run(render);
-
-//       // create runner
-//       var runner = Runner.create();
-//       Runner.run(runner, engine);
-
-//   //first ramp
-//   ramp1 = Bodies.rectangle(200, 100, 300, 30, {
-//     isStatic: true,
-//     angle: Math.PI * 0.15
-//   })
-//   World.add(engine.world, ramp1);
-//   //second ramp 
-//   ramp2 = Bodies.rectangle(375, 300, 300, 30, {
-//     isStatic: true,
-//     angle: Math.PI * 0.85
-//   })
-//   World.add(engine.world, ramp2);
-//   //third ramp
-//   ramp3 = Bodies.rectangle(200, 500, 300, 30, {
-//     isStatic: true,
-//     angle:  Math.PI * 0.15
-//   })
-//   World.add(engine.world, ramp3);
-//   block1 = Bodies.rectangle(415, 570, 145, 30, {
-//     isStatic: true,
-//   })
-//   World.add(engine.world, block1);
-
-//   tramp1 = Bodies.rectangle(550, 700, 145, 30, {
-//     isStatic: true,
-//     angle:  Math.PI * 0.12
-//   })
-//   World.add(engine.world, tramp1);
-//   tramp2 = Bodies.rectangle(800, 750, 145, 30, {
-//     isStatic: true,
-//   })
-//   World.add(engine.world, tramp2);
-
-//   //create ball
-//   ball = Bodies.circle(150, 20, 55);
-//   World.add(engine.world, ball);
-//   bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-//   World.add(engine.world, bouncyBall);
-
-//   Engine.run(engine);
-
-    
-//     // get the centre of the viewport
-//     var viewportCentre = {
-//       x: render.options.width * 0.5,
-//       y: render.options.height * 0.5
-//   };
-
-
-// }
-// // function createBall(){
-// //   ball = Bodies.circle(150, 20, 30,{ restitution: rest });
-// //   World.add(engine.world, ball);
-// // }
-// function draw() {
-//   background(170);
-//   renderVertices(ramp1)
-//   renderVertices(ramp2)
-//   renderVertices(ramp3)
-//   renderVertices(block1)
-//   renderVertices(tramp1)
-//   renderVertices(tramp2)
-//   renderVertices(ball)
-//   renderVertices(bouncyBall)
-
-
-
-// }
-
-
-// function renderVertices(body){
-//   var verts = body.vertices;
-//   beginShape();
-//   fill(127);
-//   for (var i = 0; i < verts.length; i++) {
-//     vertex(verts[i].x, verts[i].y);
-//   }
-//   endShape();
-// }
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
@@ -135,6 +7,11 @@ const Render = Matter.Render;
 const Runner= Matter.Runner;
 const Bounds=Matter.Bounds;
 const Events=Matter.Events;
+const Body   = Matter.Body;
+const Common = Matter.Common;
+const Composites = Matter.Composites;
+const Composite = Matter.Composite;
+const Constraint = Matter.Constraint;
 
 var engine;
 var ground;
@@ -146,106 +23,169 @@ var mouseConstraint;
 var blocksWidth = 10;
 var blocksHeight = 80;
 var blocksSpacing = 80;
-var rest = 1.14 
+var rest = 1.14; 
+var car;
+progX=595//the originial x of the progectile
+progY=130//the originial y of the progectile
 function setup() {
   //this is where you create canvas
-  canvas = createCanvas(0, 0);
-
+  canvas = createCanvas(0, 0,WEBGL);
   // create an engine
     engine = Engine.create();
-            // create a renderer
-        render = Render.create({
-          element: document.body,
-          engine: engine,
-          options: { 
-                      width: 1400, 
-                      height: 800,
-                      wireframes: false,
-                  }
-      });
-      Render.run(render);
+       //     create a renderer
+          var render = Render.create({
+              element: document.body,
+              engine: engine,
+              options: { 
+                          width: 1400, 
+                          height: 800,
+                          wireframes: false,
+                      }
+          });
+          Render.run(render);
 
-  //first ramp
-  ramp1 = Bodies.rectangle(200, 100, 300, 30, {
+
+    // add mouse control
+    var mouse = Mouse.create(render.canvas),
+        mouseConstraint = MouseConstraint.create(engine, {
+            mouse: mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: {
+                    visible: false
+                }
+            }
+        });
+        
+    World.add(engine.world, mouseConstraint);
+
+   
+        car=Bodies.circle(progX, progY,40)
+
+      World.add(engine.world,car)
+
+      var anchor={ x: progX, y: progY };
+
+      var elastic =Matter.Constraint.create({ 
+        pointA: anchor, 
+        bodyB: car, 
+
+        stiffness: 0.05
+    });
+    World.add(engine.world,elastic)
+    
+
+
+
+      ramp1 = Bodies.rectangle(400, 400, 900, 30, {
+        isStatic: true,
+        angle: Math.PI * 0.75
+      })
+        World.add(engine.world, ramp1)
+        currentCamBody=ramp1
+
+
+        stopper = Bodies.rectangle(400, 350, 70, 30, {
+          isStatic: true,
+          angle: Math.PI * 0.25//x-50
+        })
+          World.add(engine.world, stopper)
+
+  ramp2 = Bodies.rectangle(3500, 400, 900, 30, {
     isStatic: true,
-    angle: Math.PI * 0.15
+    angle: Math.PI * 0.05//x-70
   })
-  World.add(engine.world, ramp1);
-
-  //second ramp 
-  ramp2 = Bodies.rectangle(375, 300, 300, 30, {
-    isStatic: true,
-    angle: Math.PI * 0.85
-  })
-  World.add(engine.world, ramp2);
-
-  //third ramp
-  ramp3 = Bodies.rectangle(200, 500, 300, 30, {
-    isStatic: true,
-    angle:  Math.PI * 0.15
-  })
-  World.add(engine.world, ramp3);
+    World.add(engine.world, ramp2)
 
 
-  block1 = Bodies.rectangle(415, 570, 145, 30, {
-    isStatic: true,
-  })
-  World.add(engine.world, block1);
+
+var firing=false;
+    Events.on(mouseConstraint, 'enddrag', function(e) {
+      if(e.body===car){
+        firing=true
+        console.log("in the drag ")
+      }
+
+  });
 
 
-  tramp1 = Bodies.rectangle(570, 700, 145, 30, {
-    isStatic: true,
+  Matter.Events.on(engine,'afterUpdate', function() {
+    if (firing && Math.abs(car.position.x-progX) < 20 && Math.abs(car.position.y-progY) < 20) {
+      currentCamBody=car
+      car=Bodies.circle(progX, progY,40)
+        Matter.World.add(engine.world, car);
+        elastic.bodyB = car;
+        firing = false;
+        console.log("in the fire ")
 
-    angle:  Math.PI * 0.12
-  })
-  World.add(engine.world, tramp1);
 
-  tramp2 = Bodies.rectangle(840, 750, 145, 30, {
-    angle:  Math.PI * 0.07,
-    isStatic: true,
-  })
-  World.add(engine.world, tramp2);
+    }
 
-  //create ball
-  ball = Bodies.circle(150, 20, 55);
-  World.add(engine.world, ball);
-  currentCamBody=ball//setting big ball as camera focus
-  bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-  World.add(engine.world, bouncyBall);
-
-  Engine.run(engine);
-
-  //camera
+      //camera
   Events.on(engine, 'beforeTick', function() {
     Render.lookAt(render, currentCamBody, {
       x: 800,
       y: 800
     });
- }.bind(this));
+    if(currentCamBody.position.y==405){
+    console.log(currentCamBody.position.x)
+    console.log(currentCamBody.position.y)
+    }
+
+  }.bind(this));
+
+  });
+
+
+
+  render.mouse = mouse;
+
+
+
+
+  Engine.run(engine);
 
 }
-function draw() {
-  var collision = Matter.SAT.collides(bouncyBall, ball);
-  if (collision.collided) {
-    currentCamBody=bouncyBall//switching camera focus
-  }
-  
-  background(170);
-  renderVertices(ramp1)
-  renderVertices(ramp2)
-  renderVertices(ramp3)
-  renderVertices(block1)
-  renderVertices(tramp1)
-  renderVertices(tramp2)
-  renderVertices(ball)
-  renderVertices(bouncyBall)
-}
-function renderVertices(body){
-  var verts = body.vertices;
-  beginShape();
-  fill(127);
-  for (var i = 0; i < verts.length; i++) {
-    vertex(verts[i].x, verts[i].y);
-  }
-  endShape();
-}
+// function draw() {
+
+//   const size = width * 0.2 ;
+//   const spacing=40;
+//   rotate(PI/2);
+//   triangle(-(size/2), 0, 0,0, 0, size*1.6);
+//   rotate(PI);
+//   triangle((size/2), spacing, 0,spacing, 0, size*1.6+spacing);
+
+//   drawBodies(car.bodies);
+// }
+
+
+// function drawVertices(vertices) {
+//   beginShape();
+//   for (let i = 0; i < vertices.length; i++) {
+//     vertex(vertices[i].x, vertices[i].y);
+//   }
+//   endShape(CLOSE);
+// }
+
+// function drawBody(body) {
+//   if (body.parts && body.parts.length > 1) {
+//     for (let p = 1; p < body.parts.length; p++) {
+//       drawVertices(body.parts[p].vertices)
+//     }
+//   } else {
+//     drawVertices(body.vertices);
+//   }
+// }
+
+// function drawBodies(bodies) {
+//   for (let i = 0; i < bodies.length; i++) {
+//     drawBody(bodies[i]);
+//   }
+// }
+
+
+
+
+
+
+
