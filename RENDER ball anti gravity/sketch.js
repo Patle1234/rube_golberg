@@ -201,3 +201,15 @@ function draw() {
 
 
 }
+
+function renderVertices(body){
+  var verts = body.vertices;
+  beginShape();
+  fill(127);
+  for (var i = 0; i < verts.length; i++) {
+    vertex(verts[i].x, verts[i].y);
+  }
+  endShape();
+}
+
+
