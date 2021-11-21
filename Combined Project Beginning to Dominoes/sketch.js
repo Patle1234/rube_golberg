@@ -86,6 +86,8 @@ function setup() {
   //this is where you create canvas
   canvas = createCanvas(0, 0);
 
+
+  
   // create an engine
     engine = Engine.create();
             // create a renderer
