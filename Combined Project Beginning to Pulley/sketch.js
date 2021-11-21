@@ -78,6 +78,8 @@ let polyA4;
 let polyB4;
 var dencityer=1;
 var restitutioner = 1;
+var carBR1, carBR2, carBR3;
+var stopper;
 
 
 //variables for pulley part
@@ -141,20 +143,20 @@ function setup() {
   World.add(engine.world, block1);
 
 
-  tramp1 = Bodies.rectangle(570, 700, 145, 30, {
+  tramp1 = Bodies.rectangle(570, 700, 155, 30, {
     isStatic: true,
 
     angle:  Math.PI * 0.12
   })
   World.add(engine.world, tramp1);
 
-  tramp2 = Bodies.rectangle(840, 750, 145, 30, {
+  tramp2 = Bodies.rectangle(840, 770, 145, 30, {
     angle:  Math.PI * 0.07,
     isStatic: true,
   })
   World.add(engine.world, tramp2);
 
-  platform = Bodies.rectangle(1200, 900, 400, 30, {
+  platform = Bodies.rectangle(1200, 900, 380, 30, {
     isStatic: true,
   })
   World.add(engine.world, platform);
@@ -171,7 +173,7 @@ function setup() {
 
   //set catapult variables
 
-  catapultRamp = Bodies.rectangle(1450,1024,270,30, {isStatic: true, angle: Math.PI*0.35})
+  catapultRamp = Bodies.rectangle(1430,1024,270,30, {isStatic: true, angle: Math.PI*0.35})
   World.add(engine.world, [catapultRamp])
 
   catapultPlatform = Bodies.rectangle(1900, 2000, 1000, 25, {isStatic: true})
@@ -314,7 +316,7 @@ World.add(engine.world, [rectangle1, rectangle3]);
 circleY = 2700;
 platformY = 5750;
   
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 8; i++) {
   let p = Bodies.rectangle(3780, platformY, 40, 16, {
    
     isStatic: true,
@@ -373,7 +375,7 @@ ballA = Bodies.circle(5750, 3950, 30,{
   frictionAir:0
 });
 
-car = Composites.car(3950, 3500, 120, 20, 30, {
+car = Composites.car(3900, 3480, 120, 20, 30, {
   isStatic:true
 });
 
@@ -384,7 +386,7 @@ ground2 = Bodies.rectangle(4150, 3700, 800, 20, {
   // friction: .01
 });
 
-World.add(engine.world, [ground2, car, ballA]);
+World.add(engine.world, [ground2, ballA]);
 
 poly1 = Bodies.circle(4550, 3900, 30,{
   restitution: 0,
@@ -400,6 +402,35 @@ constraint1 = Constraint.create({
 });
 World.add(engine.world, [poly1, constraint1]);
 
+carBR1 =  Bodies.rectangle(3880, 3350, 120, 20, {
+  isStatic: true, 
+ 
+  staticfriction: 0
+  // friction: .01
+});
+
+carBR2 =  Bodies.rectangle(3930, 3300, 20, 100, {
+  isStatic: true, 
+ 
+  staticfriction: 0
+  // friction: .01
+});
+
+carBR3 =  Bodies.rectangle(3830, 3300, 20, 100, {
+  isStatic: true, 
+ 
+  staticfriction: 0
+  // friction: .01
+});
+
+stopper  = Bodies.rectangle(4000, 3540, 20, 100, {
+  isStatic: true, 
+  angle: Math.PI * 0.2,
+  staticfriction: 0
+  // friction: .01
+});
+
+World.add(engine.world, [carBR1, carBR2, carBR3, stopper, car])
 
 
 
@@ -439,15 +470,15 @@ pulleyP = Bodies.rectangle(6300, 4100, 400, 20);
   ball2P = Bodies.circle(6650, 4000, 20);
   World.add(engine.world, [ball2P]);
 
-  groundP = Bodies.rectangle(400, 590, 810, 25, {isStatic: true});
-  World.add(engine.world, [groundP]);
+  // groundP = Bodies.rectangle(400, 590, 810, 25, {isStatic: true});
+  // World.add(engine.world, [groundP]);
 
 
 
 
   Engine.run(engine);
 
-  currentCamBody = groundPD;
+  // currentCamBody = groundPD;
 
   // camera
   Events.on(engine, 'beforeTick', function() {
@@ -460,25 +491,41 @@ pulleyP = Bodies.rectangle(6300, 4100, 400, 20);
 }
 
 var collideBouncyBallOnce = false;
+var collideCarOnce = false;
+var collisionNum = 0;
 function draw() {
 
-  // Events.on(engine, 'collisionStart', function(event) {
-  //   if((Matter.SAT.collides(bouncyBall, startingBall).collided)){
-  //     currentCamBody=bouncyBall//switching camera focus
+  Events.on(engine, 'collisionStart', function(event) {
+    if((Matter.SAT.collides(bouncyBall, startingBall).collided)){
+      currentCamBody=bouncyBall//switching camera focus
 
-  //   }
-  //   if((Matter.SAT.collides(bouncyBall, catapultBall).collided) && !collideBouncyBallOnce){
-  //     currentCamBody=catapultBall//switching camera focus
-  //     collideBouncyBallOnce = true;
-  //   }
-  //   if((Matter.SAT.collides(catapultBall, catapult).collided)){
-  //     currentCamBody=plinkoBall3//switching camera focus
-  //   }
-  //   if((Matter.SAT.collides(plinkoBall3, ground2).collided)){
-  //     currentCamBody=car.bodies//switching camera focus
-  //   }
+    }
+    if((Matter.SAT.collides(bouncyBall, catapultBall).collided) && !collideBouncyBallOnce){
+      currentCamBody=catapultBall//switching camera focus
+      collideBouncyBallOnce = true;
+    }
+    if((Matter.SAT.collides(catapultBall, catapult).collided)){
+      currentCamBody=plinkoBall//switching camera focus
+    }
+    if(((Matter.SAT.collides(plinkoBall, carBR3).collided) || (Matter.SAT.collides(plinkoBall, carBR2).collided))&& !collideCarOnce){
+      // World.add(engine.world, car);
+      World.remove(engine.world, stopper);
+      currentCamBody=car.bodies//switching camera focus
+      collideCarOnce = true;
+    }
+    if((Matter.SAT.collides(poly1, allObjectsArray[0]).collided)){
+      currentCamBody=groundPD//switching camera focus
+    }
+
+
+
+    if((Matter.SAT.collides(allObjectsArray[19], ballA).collided)){
+      currentCamBody=ballA//switching camera focus
+    }
    
-  // });
+  });
+
+ 
 
  
   
@@ -505,7 +552,7 @@ function draw() {
 
 
 
-
+  console.log(platforms[0].position.y)
 
   renderVertices(rectangle1)
   renderVertices(rectangle3)
@@ -523,6 +570,12 @@ platforms.forEach(element => {
       x: 0,
       y: -4
     });
+
+    if (element.position.y<2800){
+      World.remove(engine.world, element)
+    }
+
+
 
 
 });
