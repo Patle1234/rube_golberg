@@ -1,131 +1,4 @@
-// const Engine = Matter.Engine;
-// const World = Matter.World;
-// const Bodies = Matter.Bodies;
-// const MouseConstraint = Matter.MouseConstraint;
-// const Mouse = Matter.Mouse;
-// const Render = Matter.Render;
-// const Bounds=Matter.Bounds;
-// const Runner= Matter.Runner;
 
-// var engine;
-// var ground;
-// var render;
-// var world;
-// var ramps=[];
-// var ramp;
-// var ball;
-// var mouseConstraint;
-// var blocksWidth = 10;
-// var blocksHeight = 80;
-// var blocksSpacing = 80;
-// var rest = 1.15
-// function setup() {
-//   //this is where you create canvas
-//   canvas = createCanvas(1400, 800);
-
-//   // create an engine
-//     engine = Engine.create();
-//     world = engine.world;
-
-//         // create a renderer
-//         render = Render.create({
-//           element: document.body,
-//           engine: engine,
-//           options: { 
-//                       width: window.innerWidth, 
-//                       height: window.innerHeight,
-//                       wireframes: false,
-//                       showVelocity: true,
-//                       showCollisions: true,
-//                       hasBounds: true
-//                   }
-//       });
-
-//       Render.run(render);
-
-//       // create runner
-//       var runner = Runner.create();
-//       Runner.run(runner, engine);
-
-//   //first ramp
-//   ramp1 = Bodies.rectangle(200, 100, 300, 30, {
-//     isStatic: true,
-//     angle: Math.PI * 0.15
-//   })
-//   World.add(engine.world, ramp1);
-//   //second ramp 
-//   ramp2 = Bodies.rectangle(375, 300, 300, 30, {
-//     isStatic: true,
-//     angle: Math.PI * 0.85
-//   })
-//   World.add(engine.world, ramp2);
-//   //third ramp
-//   ramp3 = Bodies.rectangle(200, 500, 300, 30, {
-//     isStatic: true,
-//     angle:  Math.PI * 0.15
-//   })
-//   World.add(engine.world, ramp3);
-//   block1 = Bodies.rectangle(415, 570, 145, 30, {
-//     isStatic: true,
-//   })
-//   World.add(engine.world, block1);
-
-//   tramp1 = Bodies.rectangle(550, 700, 145, 30, {
-//     isStatic: true,
-//     angle:  Math.PI * 0.12
-//   })
-//   World.add(engine.world, tramp1);
-//   tramp2 = Bodies.rectangle(800, 750, 145, 30, {
-//     isStatic: true,
-//   })
-//   World.add(engine.world, tramp2);
-
-//   //create ball
-//   ball = Bodies.circle(150, 20, 55);
-//   World.add(engine.world, ball);
-//   bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-//   World.add(engine.world, bouncyBall);
-
-//   Engine.run(engine);
-
-    
-//     // get the centre of the viewport
-//     var viewportCentre = {
-//       x: render.options.width * 0.5,
-//       y: render.options.height * 0.5
-//   };
-
-
-// }
-// // function createBall(){
-// //   ball = Bodies.circle(150, 20, 30,{ restitution: rest });
-// //   World.add(engine.world, ball);
-// // }
-// function draw() {
-//   background(170);
-//   renderVertices(ramp1)
-//   renderVertices(ramp2)
-//   renderVertices(ramp3)
-//   renderVertices(block1)
-//   renderVertices(tramp1)
-//   renderVertices(tramp2)
-//   renderVertices(ball)
-//   renderVertices(bouncyBall)
-
-
-
-// }
-
-
-// function renderVertices(body){
-//   var verts = body.vertices;
-//   beginShape();
-//   fill(127);
-//   for (var i = 0; i < verts.length; i++) {
-//     vertex(verts[i].x, verts[i].y);
-//   }
-//   endShape();
-// }
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
@@ -140,6 +13,7 @@ var engine;
 var ground;
 var ramps=[];
 var ramp;
+var tnt;
 var currentCamBody;
 var ball;
 var mouseConstraint;
@@ -147,8 +21,9 @@ var blocksWidth = 10;
 var blocksHeight = 80;
 var blocksSpacing = 80;
 var rest = 1.14 
+var ifExplode=false
 function setup() {
-  //this is where you create canvas
+  //this is where you create canvasasdf
   canvas = createCanvas(0, 0);
 
   // create an engine
@@ -158,94 +33,100 @@ function setup() {
           element: document.body,
           engine: engine,
           options: { 
-                      width: 1400, 
+                      width: 1600, 
                       height: 800,
                       wireframes: false,
                   }
       });
       Render.run(render);
 
-  //first ramp
-  ramp1 = Bodies.rectangle(200, 100, 300, 30, {
-    isStatic: true,
-    angle: Math.PI * 0.15
-  })
-  World.add(engine.world, ramp1);
-
-  //second ramp 
-  ramp2 = Bodies.rectangle(375, 300, 300, 30, {
-    isStatic: true,
-    angle: Math.PI * 0.85
-  })
-  World.add(engine.world, ramp2);
-
-  //third ramp
-  ramp3 = Bodies.rectangle(200, 500, 300, 30, {
-    isStatic: true,
-    angle:  Math.PI * 0.15
-  })
-  World.add(engine.world, ramp3);
+      platform = Bodies.rectangle(415, 570, 2000, 30, {
+        isStatic: true,
+      }) 
+      World.add(engine.world, platform);
 
 
-  block1 = Bodies.rectangle(415, 570, 145, 30, {
-    isStatic: true,
-  })
-  World.add(engine.world, block1);
+      //trigger
+      boomBox = Bodies.rectangle(415, 200, 50, 50, {
+        isStatic: true,
+
+      }) 
+      World.add(engine.world, boomBox);
+
+      dBox = Bodies.rectangle(415, -700, 50, 50, {
+      }) 
+      currentCamBody=boomBox
+      World.add(engine.world, dBox);
 
 
-  tramp1 = Bodies.rectangle(570, 700, 145, 30, {
-    isStatic: true,
+      //exploding box
 
-    angle:  Math.PI * 0.12
-  })
-  World.add(engine.world, tramp1);
+     tnt = Bodies.rectangle(415, 300, 300, 300, {
+      }) 
+      World.add(engine.world, tnt);
 
-  tramp2 = Bodies.rectangle(840, 750, 145, 30, {
-    angle:  Math.PI * 0.07,
-    isStatic: true,
-  })
-  World.add(engine.world, tramp2);
 
-  //create ball
-  ball = Bodies.circle(150, 20, 55);
-  World.add(engine.world, ball);
-  currentCamBody=ball//setting big ball as camera focus
-  bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-  World.add(engine.world, bouncyBall);
+
+  
+
+
+
 
   Engine.run(engine);
 
   //camera
   Events.on(engine, 'beforeTick', function() {
     Render.lookAt(render, currentCamBody, {
-      x: 800,
-      y: 800
+      x: 400,
+      y: 400
     });
  }.bind(this));
 
 }
 function draw() {
-  var collision = Matter.SAT.collides(bouncyBall, ball);
+
+  var collision = Matter.SAT.collides(dBox, boomBox);
   if (collision.collided) {
-    currentCamBody=bouncyBall//switching camera focus
+    if(!ifExplode){
+
+
+      cGap=0
+      rGap=0
+      col=10
+      row=10
+    const bodyOptions = {
+      frictionAir: 0,
+      friction: 0.0001,
+      restitution: 0.8,
+      render: { fillStyle: "red" }
+    };
+    World.add(
+      engine.world,
+      Matter.Composites.stack(tnt.position.x-10, tnt.position.y-60, col,row, rGap, cGap, (x, y) =>
+        Matter.Bodies.circle(x, y, Matter.Common.random(3, 15), bodyOptions)
+      ));
+    World.remove(engine.world,tnt)
+    explosion(engine)
+    ifExplode=true
+    }
   }
-  
-  background(170);
-  renderVertices(ramp1)
-  renderVertices(ramp2)
-  renderVertices(ramp3)
-  renderVertices(block1)
-  renderVertices(tramp1)
-  renderVertices(tramp2)
-  renderVertices(ball)
-  renderVertices(bouncyBall)
 }
-function renderVertices(body){
-  var verts = body.vertices;
-  beginShape();
-  fill(127);
-  for (var i = 0; i < verts.length; i++) {
-    vertex(verts[i].x, verts[i].y);
+
+
+function explosion(engine) {
+  const bodies = Matter.Composite.allBodies(engine.world);
+  for (let i = 0; i < bodies.length; ++i) {
+    const body = bodies[i];
+
+    if (!body.isStatic && body.position.y >= 500) {
+      const forceMagnitude = 0.05 * body.mass;//.025
+
+      Matter.Body.applyForce(body, body.position, {
+        x:
+          (forceMagnitude + Matter.Common.random() * forceMagnitude) *
+          Matter.Common.choose([1, -1]),
+        y: -forceMagnitude + Matter.Common.random() * -forceMagnitude
+      });
+    }
   }
-  endShape();
 }
