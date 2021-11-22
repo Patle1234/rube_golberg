@@ -960,7 +960,7 @@ var boo2 = false;
 
 function draw(){
 
-  console.log(plinkoBall.position.y)
+ 
 // currentCamBody = rocket
 
 
