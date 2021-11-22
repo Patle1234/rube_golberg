@@ -960,6 +960,7 @@ var boo2 = false;
 
 function draw(){
 
+  console.log(plinkoBall.position.y)
 // currentCamBody = rocket
 
 
@@ -1011,14 +1012,8 @@ function draw(){
       col4 = true;
       World.remove(engine.world, projectile)
     }
-
-
-    if(((Matter.SAT.collides(plinkoBall, carBR1).collided) || (Matter.SAT.collides(plinkoBall2, carBR1).collided) || (Matter.SAT.collides(plinkoBall, carBR1).collided))&& !col5){
-      World.remove(engine.world, stopper);
-      currentCamBody=car.bodies//switching camera focus
-      col5 = true;
-    }
     
+
     if((Matter.SAT.collides(poly1, allObjectsArray[0]).collided) && !col6){
       currentCamBody=ballA//switching camera focus
       col6 = true;
