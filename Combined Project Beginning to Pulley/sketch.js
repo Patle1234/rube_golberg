@@ -116,41 +116,41 @@ function setup() {
       Render.run(render);
 
   //first ramp
-  ramp1 = Bodies.rectangle(100, -200, 400, 30, {
+  ramp1 = Bodies.rectangle(140, -200, 400, 30, {
     isStatic: true,
     angle: Math.PI * 0.15
   })
   World.add(engine.world, ramp1);
 
   //second ramp 
-  ramp2 = Bodies.rectangle(375, 50, 500, 30, {
+  ramp2 = Bodies.rectangle(415, 50, 500, 30, {
     isStatic: true,
     angle: Math.PI * 0.85
   })
   World.add(engine.world, ramp2);
 
   //third ramp
-  ramp3 = Bodies.rectangle(150, 400, 600, 30, {
+  ramp3 = Bodies.rectangle(190, 400, 600, 30, {
     isStatic: true,
     angle:  Math.PI * 0.25
   })
   World.add(engine.world, ramp3);
 
 
-  block1 = Bodies.rectangle(470, 610, 145, 30, {
+  block1 = Bodies.rectangle(510, 610, 145, 30, {
     isStatic: true,
   })
   World.add(engine.world, block1);
 
 
-  tramp1 = Bodies.rectangle(660, 700, 155, 30, {
+  tramp1 = Bodies.rectangle(700, 700, 155, 30, {
     isStatic: true,
 
     angle:  Math.PI * 0.12
   })
   World.add(engine.world, tramp1);
 
-  tramp2 = Bodies.rectangle(910, 820, 145, 30, {
+  tramp2 = Bodies.rectangle(950, 820, 145, 30, {
     angle:  Math.PI * 0.1,
     isStatic: true,
   })
@@ -161,19 +161,26 @@ function setup() {
   })
   World.add(engine.world, platform);
 
+  // safetyRect = Bodies.rectangle(1300, 740, 250, 30, {
+  //   isStatic: true,
+  //   angle:Math.PI*.1
+  // })
+  // World.add(engine.world, safetyRect);
+
+
   startingBall = Bodies.circle(0, -300, 55);
   World.add(engine.world, startingBall);
 
   currentCamBody=startingBall//setting big ball as camera focus
 
-  bouncyBall = Bodies.circle(460, 580, 30,{ restitution: rest });
+  bouncyBall = Bodies.circle(490, 580, 30,{ restitution: rest });
 
 
 
 
   //set catapult variables
 
-  catapultRamp = Bodies.rectangle(1390,1024,200,30, {isStatic: true, angle: Math.PI*0.4})
+  catapultRamp = Bodies.rectangle(1410,1024,200,30, {isStatic: true, angle: Math.PI*0.4})
   World.add(engine.world, [catapultRamp])
 
   catapultPlatform = Bodies.rectangle(1410, 2000, 100, 25, {isStatic: true})
@@ -223,13 +230,13 @@ function setup() {
   plinkoBall = Bodies.circle(2035, 1690, 20)
   // World.add(engine.world, [plinkoBall])
 
-  plinkoBall2 = Bodies.circle(1985, 1690, 20)
+  plinkoBall2 = Bodies.circle(1965, 1690, 20)
   // World.add(engine.world, [plinkoBall2])
 
   plinkoBall3 = Bodies.circle(2135, 1690, 20)
   // World.add(engine.world, [plinkoBall3])
 
-  plinkoBall4 = Bodies.circle(2185.1595, 1690, 20)
+  plinkoBall4 = Bodies.circle(2205.1595, 1690, 20)
   // World.add(engine.world, [plinkoBall4])
 
 
@@ -254,28 +261,32 @@ function setup() {
   World.add(engine.world, [plinkoWallAngle]);
   World.add(engine.world, [plinkoWallAngle2]);
 
-  spinnyStuff = Bodies.rectangle(2700, 2450, 200, 10);
+  spinnyStuff = Bodies.rectangle(2700, 2650, 200, 10);
+ 
+
   plinkoConstraint = Constraint.create({
-    pointA: {x: 2700, y: 2450},
+    pointA: {x: 2700, y: 2650},
     bodyB: spinnyStuff,
     stiffness: 1,
     length: 0
   });
 
+
+
   World.add(engine.world, [spinnyStuff, plinkoConstraint]);
 
-  spinnyStuff2 = Bodies.rectangle(3100, 2450, 200, 10);
+  spinnyStuff2 = Bodies.rectangle(3100, 2650, 200, 10);
   plinkoConstraint2 = Constraint.create({
-    pointA: {x: 3100, y: 2450},
+    pointA: {x: 3100, y: 2650},
     bodyB: spinnyStuff2,
     length: 0
   });
 
   World.add(engine.world, [spinnyStuff2, plinkoConstraint2]);
 
-  spinnyStuff3 = Bodies.rectangle(2900, 2650, 200, 10);
+  spinnyStuff3 = Bodies.rectangle(2900, 2450, 200, 10);
   plinkoConstraint3 = Constraint.create({
-    pointA: {x: 2900, y: 2650},
+    pointA: {x: 2900, y: 2450},
     bodyB: spinnyStuff3,
     length: 0
   });
@@ -283,15 +294,41 @@ function setup() {
   World.add(engine.world, [spinnyStuff3, plinkoConstraint3]);
 
   for (let index = 0; index < 3; index++) {
-    var rectangle = Bodies.rectangle(2700 + index*200, 2850, 50, 50, {
+    var rectangle = Bodies.rectangle(2700 + index*200, 3050, 50, 50, {
         isStatic: true,
         angle: 0.785398
     
     });
 
-
     plinkoSquares.push(rectangle);
 }
+
+
+for (let index = 0; index < 10; index++) {
+  var circle = Bodies.circle(2500 + index*80, 2750, 10, {
+      isStatic: true,
+  
+  });
+  plinkoSquares.push(circle);
+}
+
+for (let index = 0; index < 10; index++) {
+  var circle = Bodies.circle(2535 + index*80, 2850, 10, {
+      isStatic: true,
+  
+  });
+  plinkoSquares.push(circle);
+}
+
+for (let index = 0; index < 10; index++) {
+  var circle = Bodies.circle(2500 + index*80, 2950, 10, {
+      isStatic: true,
+  
+  });
+  plinkoSquares.push(circle);
+}
+
+
 
 World.add(engine.world, plinkoSquares);
 
@@ -321,10 +358,10 @@ World.add(engine.world, [rectangle1, rectangle3]);
 
 
 circleY = 2700;
-platformY = 5750;
+platformY = 11500;
   
-for (let i = 0; i < 10; i++) {
-  let p = Bodies.rectangle(3780, platformY, 40, 16, {
+for (let i = 0; i < 20; i++) {
+  let p = Bodies.rectangle(3780, platformY, 50, 16, {
    
     isStatic: true,
     density:.0001,
@@ -409,21 +446,21 @@ constraint1 = Constraint.create({
 });
 World.add(engine.world, [poly1, constraint1]);
 
-carBR1 =  Bodies.rectangle(3880, 3350, 120, 20, {
+carBR1 =  Bodies.rectangle(3880, 3350, 150, 20, {
   isStatic: true, 
  
   staticfriction: 0
   // friction: .01
 });
 
-carBR2 =  Bodies.rectangle(3930, 3300, 20, 100, {
+carBR2 =  Bodies.rectangle(3945, 3300, 20, 100, {
   isStatic: true, 
  
   staticfriction: 0
   // friction: .01
 });
 
-carBR3 =  Bodies.rectangle(3830, 3300, 20, 100, {
+carBR3 =  Bodies.rectangle(3810, 3300, 20, 100, {
   isStatic: true, 
  
   staticfriction: 0
@@ -500,7 +537,8 @@ pulleyP = Bodies.rectangle(6300, 4100, 400, 20);
 
 var rerun = false;
 //prevents camera from switching twice in case of accidental secondary collision; use in all collision ifs
-var col0, col1, col2, col3, col4, col5, col6, col7 = false
+var col1, col2, col3, col4, col5, col6, col7 = false
+var stopperBool = false;
 var collisionNum = 0;
 function draw() {
 
@@ -510,13 +548,6 @@ function draw() {
       rerun = true;
   }
   Events.on(engine, 'collisionStart', function(event) {
-
-    // if((Matter.SAT.collides(startingBall, ramp3).collided) && !col0){
-    //   currentCamBody=bouncyBall//switching camera focus
-    //   World.add(engine.world, bouncyBall)
-    //   col0 = true;
-
-    // }
 
     if((Matter.SAT.collides(bouncyBall, startingBall).collided) && !col1){
       currentCamBody=bouncyBall//switching camera focus
@@ -544,24 +575,39 @@ function draw() {
     }
 
 
-    if(((Matter.SAT.collides(plinkoBall, carBR3).collided) || (Matter.SAT.collides(plinkoBall, carBR2).collided))&& !col5){
-      // World.add(engine.world, car);
-      World.remove(engine.world, stopper);
-      currentCamBody=car.bodies//switching camera focus
+    // if(((Matter.SAT.collides(plinkoBall, carBR3).collided) || (Matter.SAT.collides(plinkoBall, carBR2).collided))&& !col5){
+    //   // World.add(engine.world, car);
+    //   World.remove(engine.world, stopper);
+    //   currentCamBody=car.bodies//switching camera focus
+    //   col5 = true;
+    // }
+    
+    if((Matter.SAT.collides(poly1, allObjectsArray[0]).collided) && !col5){
+      currentCamBody=groundPD//switching camera focus
       col5 = true;
     }
-    if((Matter.SAT.collides(poly1, allObjectsArray[0]).collided) && !col6){
-      currentCamBody=groundPD//switching camera focus
-      col6 = true;
-    }
-    if((Matter.SAT.collides(allObjectsArray[19], ballA).collided) && !col7){
+    if((Matter.SAT.collides(allObjectsArray[19], ballA).collided) && !col6){
       currentCamBody=ballA//switching camera focus
-      col7 = true;
+      col6 = true;
     }
    
   });
  
 
+
+  if ((plinkoBall.position.x>3800 && plinkoBall2.position.x>3800 && plinkoBall3.position.x>3800 && plinkoBall4.position.x>3800 && plinkoBall.position.y>3250 && plinkoBall2.position.y>3250 && plinkoBall3.position.y>3250 && plinkoBall4.position.y>3250) && !stopperBool){
+        // World.add(engine.world, car);
+      World.remove(engine.world, stopper);
+      currentCamBody=car.bodies//switching camera focus
+    stopperBool = true;
+  }
+
+  //stopperBool
+
+  console.log(plinkoBall.position.y)
+  console.log(plinkoBall2.position.y)
+  console.log(plinkoBall3.position.y)
+  console.log(plinkoBall4.position.y)
  
 
  
@@ -589,8 +635,6 @@ function draw() {
 
 
 
-  console.log(platforms[0].position.y)
-
   renderVertices(rectangle1)
   renderVertices(rectangle3)
 
@@ -611,8 +655,6 @@ platforms.forEach(element => {
     if (element.position.y<2800){
       World.remove(engine.world, element)
     }
-
-
 
 
 });
