@@ -116,64 +116,64 @@ function setup() {
       Render.run(render);
 
   //first ramp
-  ramp1 = Bodies.rectangle(200, 100, 300, 30, {
+  ramp1 = Bodies.rectangle(100, -200, 400, 30, {
     isStatic: true,
     angle: Math.PI * 0.15
   })
   World.add(engine.world, ramp1);
 
   //second ramp 
-  ramp2 = Bodies.rectangle(375, 300, 300, 30, {
+  ramp2 = Bodies.rectangle(375, 50, 500, 30, {
     isStatic: true,
     angle: Math.PI * 0.85
   })
   World.add(engine.world, ramp2);
 
   //third ramp
-  ramp3 = Bodies.rectangle(180, 500, 320, 30, {
+  ramp3 = Bodies.rectangle(150, 400, 600, 30, {
     isStatic: true,
-    angle:  Math.PI * 0.15
+    angle:  Math.PI * 0.25
   })
   World.add(engine.world, ramp3);
 
 
-  block1 = Bodies.rectangle(415, 570, 145, 30, {
+  block1 = Bodies.rectangle(470, 610, 145, 30, {
     isStatic: true,
   })
   World.add(engine.world, block1);
 
 
-  tramp1 = Bodies.rectangle(570, 700, 155, 30, {
+  tramp1 = Bodies.rectangle(660, 700, 155, 30, {
     isStatic: true,
 
     angle:  Math.PI * 0.12
   })
   World.add(engine.world, tramp1);
 
-  tramp2 = Bodies.rectangle(840, 770, 145, 30, {
-    angle:  Math.PI * 0.07,
+  tramp2 = Bodies.rectangle(910, 820, 145, 30, {
+    angle:  Math.PI * 0.1,
     isStatic: true,
   })
   World.add(engine.world, tramp2);
 
-  platform = Bodies.rectangle(1200, 900, 380, 30, {
+  platform = Bodies.rectangle(1150, 900, 450, 30, {
     isStatic: true,
   })
   World.add(engine.world, platform);
 
-  startingBall = Bodies.circle(150, 20, 55);
+  startingBall = Bodies.circle(0, -300, 55);
   World.add(engine.world, startingBall);
 
   currentCamBody=startingBall//setting big ball as camera focus
 
-  bouncyBall = Bodies.circle(420, 568, 30,{ restitution: rest });
-  World.add(engine.world, bouncyBall);
+  bouncyBall = Bodies.circle(460, 580, 30,{ restitution: rest });
+
 
 
 
   //set catapult variables
 
-  catapultRamp = Bodies.rectangle(1430,1024,200,30, {isStatic: true, angle: Math.PI*0.4})
+  catapultRamp = Bodies.rectangle(1390,1024,200,30, {isStatic: true, angle: Math.PI*0.4})
   World.add(engine.world, [catapultRamp])
 
   catapultPlatform = Bodies.rectangle(1410, 2000, 100, 25, {isStatic: true})
@@ -211,7 +211,7 @@ function setup() {
  bucketPlatform = Bodies.rectangle(2085, 1820, 30, 150, {isStatic: true });
  World.add(engine.world, [bucketPlatform])
 
- catapultBall = Bodies.circle(1380, 800, 40, {mass: 40}); // make big one more 'heavy'
+ catapultBall = Bodies.circle(1370, 800, 40, {mass: 40}); // make big one more 'heavy'
   World.add(engine.world, [catapultBall])
 
   projectile = Bodies.rectangle(1320, 1550, 25, 25, {
@@ -498,12 +498,26 @@ pulleyP = Bodies.rectangle(6300, 4100, 400, 20);
 
 }
 
+var rerun = false;
 //prevents camera from switching twice in case of accidental secondary collision; use in all collision ifs
-var col1, col2, col3, col4, col5, col6, col7 = false
+var col0, col1, col2, col3, col4, col5, col6, col7 = false
 var collisionNum = 0;
 function draw() {
 
+
+  if (startingBall.position.y>400 && !rerun){
+      World.add(engine.world, bouncyBall)
+      rerun = true;
+  }
   Events.on(engine, 'collisionStart', function(event) {
+
+    // if((Matter.SAT.collides(startingBall, ramp3).collided) && !col0){
+    //   currentCamBody=bouncyBall//switching camera focus
+    //   World.add(engine.world, bouncyBall)
+    //   col0 = true;
+
+    // }
+
     if((Matter.SAT.collides(bouncyBall, startingBall).collided) && !col1){
       currentCamBody=bouncyBall//switching camera focus
       col1 = true;
@@ -511,6 +525,7 @@ function draw() {
     }
     if((Matter.SAT.collides(bouncyBall, catapultBall).collided) && !col2){
       currentCamBody=catapultBall//switching camera focus
+
       World.add(engine.world, [projectile])
       col2 = true;
       World.add(engine.world, [plinkoBall, plinkoBall2, plinkoBall3, plinkoBall4])                                 
